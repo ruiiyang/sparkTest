@@ -21,7 +21,7 @@ Using Scala version 2.12.18
 
 Using Java HotSpot(TM) 64-Bit Server VM, 21.0.2
 
-see requirement.txt
+see [requirement.txt](https://github.com/ruiiyang/sparkTest/blob/main/requirements.txt)
 
 ## Usage
 
