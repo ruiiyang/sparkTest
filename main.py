@@ -1,34 +1,33 @@
 
 from pyspark.sql import SparkSession
+from argparse import ArgumentParser
 import logging
-#from utils import
-# Create a SparkSession
-spark = SparkSession.builder \
-    .appName("Read CSV Example") \
-    .getOrCreate()
-#Reading in the csv file
-df = spark.read.csv ('dataset_one.csv', header=True, inferSchema=True)
-ccinfo = spark.read.csv ('dataset_two.csv', header=True, inferSchema=True)
-#Filter country
-df_UKNL = df.filter(df['country'].isin('United Kingdom', 'the Netherlands'))
-#Keep email and drop other PII
-df_UKNL_NoPI = df_UKNL.drop("first_name","last_name")
-#Drop credit card number
-ccinfo = ccinfo.drop("cc_n")
-#Join all table together
-client_data = df_UKNL_NoPI.join(ccinfo, on='id', how="left" )
-client_data.show()
-#Rename the id,btc_a, cc_t field
-client_data_rename = client_data.withColumnRenamed("id", "client_identifier")\
-    .withColumnRenamed("btc_a", "bitcoin_address")\
-    .withColumnRenamed("cc_t", "credit_card_type")
-client_data_rename.show()
-# Adjust the file path here
-output_path = "./client_data"
-client_data_rename.write.parquet(output_path)
-
-#stopping sparks
-spark.stop()
-
-
-#if __name__ == "__main__":
+import utils
+if __name__ == "__main__":
+    #Start Spark Session
+    spark = SparkSession.builder \
+        .appName("SparkTest") \
+        .getOrCreate()
+    #Parse the arguement into object
+    args = utils.get_args()  #
+    #Reading in the csv file
+    df = spark.read.csv(args.dataset1_path, header=True, inferSchema=True)
+    ccinfo = spark.read.csv(args.dataset2_path, header=True, inferSchema=True)
+    #Filter country with the intake argument
+    df_UKNL = utils.filter_client_country(args.country, df)
+    #Keep email and drop other PII
+    df_UKNL_NoPI = df_UKNL.drop("first_name", "last_name")
+    #Drop credit card number
+    ccinfo = ccinfo.drop("cc_n")
+    #Join all table together
+    client_data = df_UKNL_NoPI.join(ccinfo, on='id', how="left" )
+    #Rename the id,btc_a, cc_t field
+    rename_dict = {"id": "client_identifier", "btc_a": "bitcoin_address", "cc_t": "credit_card_type"}
+    client_data_rename = utils.rename(client_data, rename_dict)
+    #Start Logging Configuration
+    logging.basicConfig(filename="./logs/log", level=logging.INFO,
+                      format='(%(asctime)s):%(levelname)s:%(message)s')
+    # Adjust the outfile path here
+    client_data_rename.write.parquet("client_data")
+    #Stopping sparks
+    spark.stop()
