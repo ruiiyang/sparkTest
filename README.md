@@ -48,6 +48,12 @@ Rotation-logging
 spark-submit main.py --country "France" --dataset1_path "dataset_one.csv" --dataset2_path "dataset_two.csv" --conf spark.eventLog.rotation.enabled=true 
 ```
 
+Result
+
+```
+Given argument of two dataset locations, able to join it to one dataset and masking the personal infoamation (name, credit card number) during this process. Output is a joined table in parquet format.
+```
+
 ## Contributing
 
 Pull requests are welcome. This code is only for project purpose.
