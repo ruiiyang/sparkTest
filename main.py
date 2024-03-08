@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from argparse import ArgumentParser
 import logging
 import utils
-import unittest
+
 if __name__ == "__main__":
     #Start Logging Configuration
     logging.basicConfig(filename="./logs/log", level=logging.INFO,
