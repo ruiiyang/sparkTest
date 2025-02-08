@@ -1,6 +1,6 @@
 # SparkT
 
-SparkT is an application demo using SparkSQL.
+SparkT is an application demo using SparkSQL. Test for Bank Client
 
 ## Installation
 
